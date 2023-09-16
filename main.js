@@ -41,21 +41,46 @@ function playRound(playerUnit, computerUnit) {
     }
 }
 
-function game() {
-    let score = 0;
-    for(let i = 0; i < 5; i++) {
-        let playerSelection = prompt("Select a unit!").toLowerCase();
-        let computerSelection = getComputerUnit();
-        let result = playRound(playerSelection, computerSelection);
-        alert(result)
-        if(result.includes("Invalid")) {
-            i--;
-        } else if(result.includes("Win")) {
-            score++;
-        }
-    }
+let result = document.getElementById("result");
 
-    alert(`Final score: ${score}`);
+let playerScore = 0;
+let computerScore = 0;
+
+let playerDisplay = document.getElementById("player-score");
+let computerDisplay = document.getElementById("computer-score");
+
+let unitButtons = [];
+
+unitButtons.push(
+    document.getElementById("archer"),
+    document.getElementById("scout"), 
+    document.getElementById("spear")
+);
+
+function playGame(e) {
+    let matchResult = playRound(e.target.id, getComputerUnit());
+
+    if(matchResult.includes("Win")) {
+        playerScore++;
+        playerDisplay.innerText = `Player score ${playerScore}`;
+        if(playerScore == 5) {
+            result.innerText = "Player has won!!!";
+            this.removeEventListener("click", (e) => playGame(e));
+        } else {
+            result.innerText = matchResult;
+        }
+    } else if(matchResult.includes("Lose")) {
+        computerScore++;
+        computerDisplay.innerText = `Computer score ${computerScore}`;
+        if(computerScore == 5) {
+            result.innerText = "Computer has won!!!";
+            this.removeEventListener("click", (e) => playGame(e));
+        } else {
+            result.innerText = matchResult;
+        }
+    };
 }
 
-game();
+unitButtons.forEach(unitButton => {
+    unitButton.addEventListener("click", (e) => playGame(e));
+});
